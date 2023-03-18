@@ -1,0 +1,32 @@
+{% extends 'campus/base.html' %}
+
+{% block content %}
+    <h1>{{ course.name }}</h1>
+    <p>{{ course.description }}</p>
+    <p>Offered by: {{ course.university.name }}</p>
+    <p>Website: <a href="{{ course.university.website }}">{{ course.university.website }}</a></p>
+    <p>Contact email: {{ course.university.contact_email }}</p>
+    <p>Average Rating: {{ rating }}</p>
+    {% if request.user.is_authenticated %}
+        <a href="{% url 'universities:submit_review' course.pk %}">Submit a review</a>
+    {% else %}
+        <p>Login to submit a review</p>
+    {% endif %}
+
+    {% if reviews %}
+        <h2>Reviews</h2>
+        <ul>
+            {% for review in reviews %}
+                <li>
+                    <p>Review: {{ review.review_text }}</p>
+                    <p>Submitted by: {{ review.user.username }}</p>
+                </li>
+            {% empty %}
+                <p>No reviews available for this course.</p>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
+
+
+

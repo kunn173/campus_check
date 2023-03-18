@@ -1,0 +1,24 @@
+{% extends 'campus/base.html' %}
+
+{% block content %}
+    <h1>Student Profile</h1>
+    <h2>Personal Information</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Update Profile</button>
+    </form>
+    <hr>
+    <h2>My Reviews</h2>
+    {% if reviews %}
+        <ul>
+        {% for review in reviews %}
+            <li><a href="{% url 'universities:course_detail' review.course.id %}">{{ review.course.name }}</a></li>
+        {% empty %}
+            <p>You haven't submitted any reviews yet.</p>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>You haven't submitted any reviews yet.</p>
+    {% endif %}
+{% endblock %}
