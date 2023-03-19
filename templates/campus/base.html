@@ -33,6 +33,10 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'universities:logout' %}">Logout</a>   
                 </li>
+                </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'universities:student_profile' %}">Profile</a>
+                    </li>
             {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'universities:register' %}">Register</a>   

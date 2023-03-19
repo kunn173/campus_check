@@ -1,5 +1,5 @@
 from django import forms
-from .models import Review, Enrollment
+from .models import Review, Enrollment, StudentProfile
 
 class CourseReviewForm(forms.ModelForm):
     class Meta:
@@ -33,3 +33,14 @@ class CourseReviewForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+
+class StudentProfileForm(forms.ModelForm):
+    class Meta:
+        model = StudentProfile
+        fields = ['email', 'first_name', 'last_name', 'date_of_birth']
+
+    email = forms.EmailField(required=True)
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
+    date_of_birth = forms.DateField(required=True, widget=forms.DateInput(attrs={'type': 'date'}))

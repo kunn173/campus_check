@@ -12,6 +12,62 @@ from .models import Course, Enrollment
 from .forms import CourseReviewForm
 from django.db.models import Avg, Sum
 
+from .forms import StudentProfileForm
+from .models import StudentProfile
+
+
+@login_required
+def student_profile(request):
+    try:
+        profile = StudentProfile.objects.get(user=request.user)
+    except StudentProfile.DoesNotExist:
+        profile = StudentProfile(user=request.user)
+        profile.save()
+
+    reviews = Review.objects.filter(user=request.user)
+    ratings_by_course = {}
+
+    for review in reviews:
+        if review.course_id not in ratings_by_course:
+            ratings_by_course[review.course_id] = {
+            'value_for_money': [review.value_for_money],
+            'teaching_quality': [review.teaching_quality],
+            'course_content': [review.course_content],
+            'job_prospects': [review.job_prospects],
+            'review_text': [review.review_text],
+        }
+        else:
+            ratings_by_course[review.course_id]['value_for_money'].append(review.value_for_money)
+            ratings_by_course[review.course_id]['teaching_quality'].append(review.teaching_quality)
+            ratings_by_course[review.course_id]['course_content'].append(review.course_content)
+            ratings_by_course[review.course_id]['job_prospects'].append(review.job_prospects)
+            ratings_by_course[review.course_id]['review_text'].append(review.review_text)
+
+    courses = Course.objects.all()
+
+    for course in courses:
+        if course.id in ratings_by_course:
+            course.avg_rating = sum(ratings_by_course[course.id]['value_for_money'][:3]) / (4 * len(ratings_by_course[course.id]['value_for_money'][:3]))
+            course.review_text = ratings_by_course[course.id]['review_text'][0]
+        else:
+            course.avg_rating = None
+            course.review_text = None
+
+    form = StudentProfileForm(instance=profile)
+
+    if request.method == 'POST':
+        form = StudentProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('universities:student_profile'))
+
+    context = {
+        'form': form,
+        'courses': courses
+    }
+
+    return render(request, 'campus/student_profile.html', context)
+
 
 @login_required
 def submit_review(request, course_id):
@@ -61,7 +117,7 @@ def user_login(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('index')
+                return redirect('universities:university_list')
     else:
         form = AuthenticationForm()
     return render(request, 'registration/login.html', {'form': form})

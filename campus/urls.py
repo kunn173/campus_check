@@ -13,7 +13,8 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
-    path('courses/<int:course_id>/submit_review/', views.submit_review, name='submit_review')
+    path('courses/<int:course_id>/submit_review/', views.submit_review, name='submit_review'),
+    path('student_profile/', views.student_profile, name='student_profile'),
 
 
 ]
