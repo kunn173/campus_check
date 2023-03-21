@@ -12,7 +12,7 @@ from django.http import JsonResponse
 from django.views.generic import ListView #XuanmingFeng
 
 
-def top_universities(request):#Xuanming Feng
+def top_universities(request): #Xuanming Feng
     universities = University.objects.order_by('-average_rating')[:5]
     return render(request, 'campus_check/top_universities.html', {'universities': universities})
 

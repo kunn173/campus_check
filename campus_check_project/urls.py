@@ -28,6 +28,6 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
-    path('student_profile/', views.student_profile, name='student_profile'),
+    path('student_profile/', views.student_profile, name='student_profile'), #changed
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
