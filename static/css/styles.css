@@ -36,7 +36,6 @@ p {
   font-size: 0;
 }
 
-
 .star-rating input[type="radio"] {
   display: none;
 }
@@ -56,17 +55,16 @@ p {
 
 .star-rating label:before {
   content: '\f005';
-  font-family: FontAwesome;
+  font-family: FontAwesome;  
+}
+
+.star-rating label:hover {
+  color: #f7d000; 
   
 }
 
-
-.star-rating input[type="radio"]:checked ~ label {
-  color: #ffbf00;
-}
-
-.star-rating input[type="radio"]:checked ~ label:before {
-  content: '\f005';
+.star-rating label.checked {
+  color: orange;
 }
 
 

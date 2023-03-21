@@ -1,20 +1,20 @@
-import os
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'campus_check_project.settings')
+# import os
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'campus_check_project.settings')
 
-import django
-django.setup()
-from campus.models import University, Course, Location, Degree, User, Enrollment
+# import django
+# django.setup()
+# from campus.models import University, Course, Location, Degree, User, Enrollment
 
-def populate():
-        email = 'student@gmail.com'
-        user = User.objects.create_user(email, email, 'password')
-        # Enroll the user in a course at a university
-        university = University.objects.first()
-        degree = Degree.objects.first()
-        course = Course.objects.first()
-        enrollment = Enrollment.objects.create(user_email=email, university=university, degree=degree)
-        enrollment.courses.add(course)
-#     scotland_universities = [
+# def populate():
+#         email = 'student@gmail.com'
+#         user = User.objects.create_user(email, email, 'password')
+#         # Enroll the user in a course at a university
+#         university = University.objects.first()
+#         degree = Degree.objects.first()
+#         course = Course.objects.first()
+#         enrollment = Enrollment.objects.create(user_email=email, university=university, degree=degree)
+#         enrollment.courses.add(course)
+#         scotland_universities = [
 #     {
 #         'name': 'University of Glasgow',
 #         'location': {
@@ -45,34 +45,34 @@ def populate():
 #     }
 # ]
 
-#     for uni_data in scotland_universities:
-#         location_data = uni_data['location']
-#         location = add_location(
-#             location_data['name'],
-#             location_data['latitude'],
-#             location_data['longitude']
-#         )
-#         degree_data = uni_data['degree']
-#         degree = add_degree(
-#             degree_data['name'],
-#             degree_data['description']
-#         )
-#         uni = add_university(
-#             uni_data['name'],
-#             uni_data['logo'],
-#             uni_data['description'],
-#             uni_data['website'],
-#             uni_data['contact_email'],
-#             location
-#         )
-#         add_uni_location_degree(uni, location, degree)
-#         for course_data in uni_data['courses']:
-#             add_course(
-#                 uni,
-#                 course_data['name'],
-#                 course_data['course_code'],
-#                 course_data['description']
-#             )
+#         for uni_data in scotland_universities:
+#                 location_data = uni_data['location']
+#                 location = add_location(
+#                 location_data['name'],
+#                 location_data['latitude'],
+#                 location_data['longitude']
+#                 )
+#                 degree_data = uni_data['degree']
+#                 degree = add_degree(
+#                 degree_data['name'],
+#                 degree_data['description']
+#                 )
+#                 uni = add_university(
+#                 uni_data['name'],
+#                 uni_data['logo'],
+#                 uni_data['description'],
+#                 uni_data['website'],
+#                 uni_data['contact_email'],
+#                 location
+#                 )
+#                 add_uni_location_degree(uni, location, degree)
+#                 for course_data in uni_data['courses']:
+#                 add_course(
+#                         uni,
+#                         course_data['name'],
+#                         course_data['course_code'],
+#                         course_data['description']
+#                 )
 
 
 # def add_university(name, logo, description, website, contact_email, location):
@@ -122,6 +122,6 @@ def populate():
 
 
 
-if __name__ == '__main__':
-    print('Starting population script...')
-    populate()
+# if __name__ == '__main__':
+#     print('Starting population script...')
+#     populate()

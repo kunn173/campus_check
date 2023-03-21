@@ -127,7 +127,28 @@ def user_logout(request):
 def index(request):
     return render(request, 'campus/index.html')
 
+def get_universities_list(max_results=0, starts_with=''):
+    universities_list = []
+    if starts_with:
+        universities_list = University.objects.filter(Q(name__icontains=starts_with) | 
+                                           Q(location__name__icontains=starts_with) | 
+                                           Q(degree__name__icontains=starts_with) | 
+                                           Q(courses__name__icontains=starts_with))
+        if max_results > 0:
+            if len(universities_list) > max_results:
+                universities_list = universities_list[:max_results]
+    return universities_list
 
+def universitiesSuggestionView(request):
+
+        if 'suggestion' in request.GET:
+            suggestion = request.GET['suggestion']
+        else:
+            suggestion = ''
+        university_list = get_universities_list(max_results=8,starts_with=suggestion)
+        if len(university_list) == 0:
+            university_list = University.objects.all()
+        return render(request,'campus/university_list.html',{'university': university_list})
 
 def university_list(request):
     universities = University.objects.all()
