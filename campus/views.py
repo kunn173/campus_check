@@ -9,6 +9,7 @@ from django.urls import reverse
 from .forms import CourseReviewForm, StudentProfileForm
 from django.db.models import Avg, Sum
 from django.http import JsonResponse
+from django.db.models import Q
 
 
 
@@ -127,26 +128,17 @@ def index(request):
     return render(request, 'campus/index.html')
 
 
+
 def university_list(request):
     universities = University.objects.all()
-    university_name = request.GET.get('university_name')
-    city = request.GET.get('city')
-    level_of_study = request.GET.get('level_of_study')
-    course_name = request.GET.get('course_name')
+    search_term = request.GET.get('search')
 
-    if university_name: # filter by university name
-        universities = universities.filter(name__icontains=university_name)
-
-    if city:
-        universities = universities.filter(location__name__icontains=city)
-
-    if level_of_study:
-        degrees = Degree.objects.filter(name__icontains=level_of_study)
-        universities = universities.filter(degree__in=degrees)
-
-    if course_name:
-        courses = Course.objects.filter(name__icontains=course_name)
-        universities = universities.filter(courses__in=courses)
+    if search_term:
+        # search across different fields
+        universities = universities.filter(Q(name__icontains=search_term) | 
+                                           Q(location__name__icontains=search_term) | 
+                                           Q(degree__name__icontains=search_term) | 
+                                           Q(courses__name__icontains=search_term))
 
     university_ratings = {}
     for university in universities:

@@ -16,15 +16,9 @@
                 <span class="fa fa-star {% if university_rating > 3 %} checked {% endif %}" ></span>
                 <span class="fa fa-star {% if university_rating > 4 %} checked {% endif %}"></span> </p>
             {% endif %}
-            <ul>
-                {% for degree in university.degree.all %}
-                    <li>{{ degree.name }}</li>
-                {% empty %}
-                    <p>No degrees available for this university.</p>
-                {% endfor %}
-            </ul>
-            <p>Website: <a href="{{ university.website }}">{{ university.website }}</a></p>
-            <p>Contact Email: <a href="mailto:{{ university.contact_email }}">{{ university.contact_email }}</a></p>
+            
+        <p>Website: <a href="{{ university.website }}">{{ university.website }}</a></p>
+        <p>Contact Email: <a href="mailto:{{ university.contact_email }}">{{ university.contact_email }}</a></p>
         </div>
     </div>
     <h2>Courses</h2>

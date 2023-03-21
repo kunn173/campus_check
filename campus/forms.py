@@ -1,17 +1,27 @@
 from django import forms
 from .models import Review, Enrollment, StudentProfile
 
+from django import forms
+from .models import Review
+
 class CourseReviewForm(forms.ModelForm):
+    value_for_money = forms.ChoiceField(choices=[(i, '') for i in range(1, 6)],
+                                        widget=forms.RadioSelect(attrs={'class': 'star-rating'}),
+                                        label='Value for Money')
+    teaching_quality = forms.ChoiceField(choices=[(i, '') for i in range(1, 6)],
+                                         widget=forms.RadioSelect(attrs={'class': 'star-rating'}),
+                                         label='Teaching Quality')
+    course_content = forms.ChoiceField(choices=[(i, '') for i in range(1, 6)],
+                                       widget=forms.RadioSelect(attrs={'class': 'star-rating'}),
+                                       label='Course Content')
+    job_prospects = forms.ChoiceField(choices=[(i, '') for i in range(1, 6)],
+                                      widget=forms.RadioSelect(attrs={'class': 'star-rating'}),
+                                      label='Job Prospects')
+    review_text = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}))
+
     class Meta:
         model = Review
         fields = ('value_for_money', 'teaching_quality', 'course_content', 'job_prospects', 'review_text')
-        widgets = {
-            'value_for_money': forms.NumberInput(attrs={'min': 1, 'max': 5}),
-            'teaching_quality': forms.NumberInput(attrs={'min': 1, 'max': 5}),
-            'course_content': forms.NumberInput(attrs={'min': 1, 'max': 5}),
-            'job_prospects': forms.NumberInput(attrs={'min': 1, 'max': 5}),
-            'review_text': forms.Textarea(attrs={'rows': 5}),
-        }
 
     def __init__(self, *args, **kwargs):
         self.course = kwargs.pop('course')

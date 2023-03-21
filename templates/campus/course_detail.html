@@ -1,37 +1,41 @@
 {% extends 'campus/base.html' %}
 
 {% block content %}
-    <h1>{{ course.name }}</h1>
-    <p>{{ course.description }}</p>
-    <p>Offered by: {{ course.university.name }}</p>
-    <p>Website: <a href="{{ course.university.website }}">{{ course.university.website }}</a></p>
-    <p>Contact email: {{ course.university.contact_email }}</p>
-    <p>Average Rating: 
-    <span class="fa fa-star {% if rating > 0 %} checked {% endif %}"></span>
-    <span class="fa fa-star {% if rating > 1 %} checked {% endif %}"></span>
-    <span class="fa fa-star {% if rating > 2 %} checked {% endif %}"></span>
-    <span class="fa fa-star {% if rating > 3 %} checked {% endif %}" ></span>
-    <span class="fa fa-star {% if rating > 4 %} checked {% endif %}"></span></p>
-    {% if request.user.is_authenticated %}
-        <a href="{% url 'universities:submit_review' course.slug %}">Submit a review</a>
-    {% else %}
-        <p>Login to submit a review</p>
-    {% endif %}
-
+  <div class="container">
+    <h1 class="display-4">{{ course.name }}</h1>
+    <div class="row">
+      <div class="col-md-8">
+        <p class="lead">{{ course.description }}</p>
+        <p>Offered by: {{ course.university.name }}</p>
+        <p>Website: <a href="{{ course.university.website }}">{{ course.university.website }}</a></p>
+        <p>Contact email: {{ course.university.contact_email }}</p>
+        <p>Average Rating:
+          <span class="fa fa-star {% if rating > 0 %} checked {% endif %}"></span>
+          <span class="fa fa-star {% if rating > 1 %} checked {% endif %}"></span>
+          <span class="fa fa-star {% if rating > 2 %} checked {% endif %}"></span>
+          <span class="fa fa-star {% if rating > 3 %} checked {% endif %}" ></span>
+          <span class="fa fa-star {% if rating > 4 %} checked {% endif %}"></span>
+        </p>
+        {% if request.user.is_authenticated %}
+          <a href="{% url 'universities:submit_review' course.slug %}" class="btn btn-primary beautiful-button">Submit a review</a>
+        {% else %}
+          <p>Login to submit a review</p>
+        {% endif %}
+      </div>
+    </div>
     {% if reviews %}
-        <h2>Reviews</h2>
-        <ul>
-            {% for review in reviews %}
-                <li>
-                    <p>Review: {{ review.review_text }}</p>
-                    <p>Submitted by: {{ review.user.username }}</p>
-                </li>
-            {% empty %}
-                <p>No reviews available for this course.</p>
-            {% endfor %}
-        </ul>
+      <h2 class="mt-5">Reviews</h2>
+      <ul class="list-unstyled">
+        {% for review in reviews %}
+          <li class="mb-4">
+            <p>{{ review.review_text }}</p>
+            <p class="text-muted mb-0">Submitted by: {{ review.user.username }}</p>
+            <hr>
+          </li>
+        {% empty %}
+          <p>No reviews available for this course.</p>
+        {% endfor %}
+      </ul>
     {% endif %}
+  </div>
 {% endblock %}
-
-
-

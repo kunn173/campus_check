@@ -1,43 +1,35 @@
-function initStarRating() {
-  const ratingForms = document.querySelectorAll('form.star-rating-form');
+const starInputs = document.querySelectorAll('.star-rating input[type="radio"]');
 
-  // Add event listeners to each rating form
-  ratingForms.forEach(function(form) {
-    form.addEventListener('click', function(event) { 
-      event.preventDefault();
+const handleStarSelect = (input) => {
+  const inputs = Array.from(starInputs);
+  const index = inputs.indexOf(input);
 
-      // Send rating to server
-      const data = new FormData(this);
-      fetch(this.action, {
-        method: this.method,
-        headers: { 'X-CSRFToken': this.querySelector('input[name="csrfmiddlewaretoken"]').value },
-        body: data
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to save rating');
-        }
-        // Do not reload the page, update rating dynamically
-        const ratingValue = parseInt(data.get('rating')); // Get the rating value from the form data
-        const starContainer = this.querySelector('.star-rating'); // Get the star rating container element
-        starContainer.dataset.rating = ratingValue; // Set the new rating value in the dataset attribute
-      }).catch(error => {
-        console.error(error);
-      });
-    });
+  inputs.forEach((input, i) => {
+    const star = input.nextElementSibling;
+    if (i <= index) {
+      star.style.color = "#f7d000"; // change color to yellow
+    } else {
+      star.style.color = "#0b0202"; // reset color to black
+    }
   });
-}
+};
 
-// Wait for the document to load before initializing the star rating system
-document.addEventListener('DOMContentLoaded', function() {
-  initStarRating();
+starInputs.forEach((input) => {
+  input.addEventListener('mouseover', (event) => {
+    handleStarSelect(event.target);
+  });
+  input.addEventListener('mouseout', () => {
+    handleStarSelect(null);
+  });
 });
 
+const form = document.querySelector('.rate-form');
+const confirmBox = document.getElementById('confirm-box');
 
-$(function () {
-  $(".rateyo").rateYo({
-    starWidth: "80px"
-  }).on("rateyo.change", function (e, data) {
-    var rating = data.rating;
-    $(this).parent().find('.result').text('rating :'+ rating);
-   });
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const formData = new FormData(form);
+  const formValues = Object.fromEntries(formData.entries());
+  console.log(formValues);
+  confirmBox.innerHTML = 'Review submitted!';
 });
