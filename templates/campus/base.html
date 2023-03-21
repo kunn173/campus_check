@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-{% load staticfiles %}
 {% load static %}
 <html lang="en">
 <head>
@@ -26,30 +25,33 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'index' %}">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'universities:university_list' %}">Universities</a>   
-            </li>
-            {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>   
-                </li>
-                </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'student_profile' %}">Profile</a>
-                    </li>
-            {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'register' %}">Register</a>   
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Login</a>   
-                </li>
-            {% endif %}
-        </ul>
+     <ul class="navbar-nav ml-auto">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'index' %}">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'universities:university_list' %}">Universities</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'universities:top_universities' %}">Top Universities</a>
+    </li>
+    {% if user.is_authenticated %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'student_profile' %}">Profile</a>
+        </li>
+    {% else %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'register' %}">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
+        </li>
+    {% endif %}
+</ul>
+
     </div>
 </nav>
 

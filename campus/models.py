@@ -32,6 +32,7 @@ class University(models.Model):
     website = models.URLField()
     contact_email = models.EmailField()
     slug = models.SlugField(unique=True)
+    average_rating = models.FloatField(default=0) #Xuanming Feng
 
     @property
     def avg_rating(self):

@@ -9,8 +9,12 @@ from django.urls import reverse
 from .forms import CourseReviewForm, StudentProfileForm
 from django.db.models import Avg, Sum
 from django.http import JsonResponse
+from django.views.generic import ListView #XuanmingFeng
 
 
+def top_universities(request):#Xuanming Feng
+    universities = University.objects.order_by('-average_rating')[:5]
+    return render(request, 'campus_check/top_universities.html', {'universities': universities})
 
 @login_required
 def student_profile(request):
@@ -215,4 +219,8 @@ def course_detail(request, course_name_slug):
 
     return render(request, 'campus/course_detail.html', {'course': course, 'rating': rating, 'reviews': reviews})
 
-
+class TopUniversitiesView(ListView): #Xuanming Feng
+    model = University
+    template_name = 'top_universities.html'
+    context_object_name = 'universities'
+    queryset = University.objects.order_by('-average_rating')[:5]
