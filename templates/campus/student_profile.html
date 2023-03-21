@@ -13,11 +13,16 @@
 
   <h2>Your Reviews</h2>
 
-  <h3>All Courses</h3>
+
   {% for course in courses %}
     <h4>{{ course.name }}</h4>
     {% if course.avg_rating %}
-      <p>Rating: {{ course.avg_rating|floatformat:1 }}</p>
+      <p>Rating: 
+      <span class="fa fa-star {% if course.avg_rating > 0 %} checked {% endif %}"></span>
+      <span class="fa fa-star {% if course.avg_rating > 1 %} checked {% endif %}"></span>
+      <span class="fa fa-star {% if course.avg_rating > 2 %} checked {% endif %}"></span>
+      <span class="fa fa-star {% if course.avg_rating > 3 %} checked {% endif %}" ></span>
+      <span class="fa fa-star {% if course.avg_rating > 4 %} checked {% endif %}"></span></p>
       <p>Review: {{ course.review_text }}</p>
     {% else %}
       <p>No ratings yet.</p>

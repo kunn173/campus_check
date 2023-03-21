@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
-from django.db.models import Avg, Subquery, OuterRef
+from django.db.models import Avg
+from django.template.defaultfilters import slugify
 
 class Location(models.Model):
     name = models.CharField(max_length=100)
@@ -30,6 +31,7 @@ class University(models.Model):
     description = models.TextField()
     website = models.URLField()
     contact_email = models.EmailField()
+    slug = models.SlugField(unique=True)
 
     @property
     def avg_rating(self):
@@ -42,6 +44,10 @@ class University(models.Model):
             return (value_for_money_avg + teaching_quality_avg + course_content_avg + job_prospects_avg) / 4
         else:
             return None
+        
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(University, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -53,6 +59,11 @@ class Course(models.Model):
     course_code = models.CharField(max_length=10)
     description = models.TextField()
     university = models.ForeignKey(University, on_delete=models.CASCADE, related_name='courses')
+    slug = models.SlugField(unique=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Course, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.course_code}: {self.name}"

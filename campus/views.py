@@ -1,19 +1,15 @@
-from django.shortcuts import render, get_object_or_404
-from .models import University, Course, Degree, Review
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import University, Course, Degree, Review, Enrollment, StudentProfile
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.shortcuts import render, redirect
-from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from .models import Course, Enrollment
-from .forms import CourseReviewForm
+from .forms import CourseReviewForm, StudentProfileForm
 from django.db.models import Avg, Sum
+from django.http import JsonResponse
 
-from .forms import StudentProfileForm
-from .models import StudentProfile
 
 
 @login_required
@@ -70,8 +66,8 @@ def student_profile(request):
 
 
 @login_required
-def submit_review(request, course_id):
-    course = get_object_or_404(Course, pk=course_id)
+def submit_review(request, course_name_slug):
+    course = get_object_or_404(Course, slug=course_name_slug)
     user = request.user
     try:
         enrollment = Enrollment.objects.get(user=user, courses=course)
@@ -86,7 +82,7 @@ def submit_review(request, course_id):
             review.user = user
             review.university = course.university
             review.save()
-            return HttpResponseRedirect(reverse('universities:course_detail', args=[course.pk]))
+            return HttpResponseRedirect(reverse('universities:course_detail', args=[course.slug]))
     else:
         form = CourseReviewForm(course=course, user=user)
 
@@ -178,8 +174,8 @@ def university_list(request):
     return render(request, 'campus/university_list.html', context)
 
 
-def university_detail(request, pk):
-    university = get_object_or_404(University, pk=pk)
+def university_detail(request, university_name_slug):
+    university = get_object_or_404(University, slug=university_name_slug)
     courses = Course.objects.filter(university=university)
     course_ratings = []
     for course in courses:
@@ -207,8 +203,8 @@ def university_detail(request, pk):
 
 
 
-def course_detail(request, pk):
-    course = get_object_or_404(Course, pk=pk)
+def course_detail(request, course_name_slug):
+    course = get_object_or_404(Course, slug=course_name_slug)
     reviews = Review.objects.filter(course=course)
     rating = 0
     if reviews:
