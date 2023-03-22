@@ -229,3 +229,33 @@ def course_detail(request, course_name_slug):
     return render(request, 'campus/course_detail.html', {'course': course, 'rating': rating, 'reviews': reviews})
 
 
+from django.views.generic import ListView #XuanmingFeng
+
+class TopUniversitiesView(ListView): #Xuanming Feng
+    model = University
+    template_name = 'campus/top_universities.html'
+    context_object_name = 'top_universities'
+
+    def get_queryset(self):
+        universities = University.objects.all()
+        university_ratings = []
+
+        for university in universities:
+            course_ratings = []
+            courses = university.courses.all()
+
+            for course in courses:
+                reviews = course.review_set.all()
+                if reviews:
+                    course_rating = (reviews.aggregate(Avg('value_for_money'))['value_for_money__avg'] +
+                                     reviews.aggregate(Avg('teaching_quality'))['teaching_quality__avg'] +
+                                     reviews.aggregate(Avg('course_content'))['course_content__avg'] +
+                                     reviews.aggregate(Avg('job_prospects'))['job_prospects__avg']) / 4
+                    course_ratings.append(course_rating)
+
+            if course_ratings:
+                university_rating = sum(course_ratings) / len(course_ratings)
+                university_ratings.append((university, university_rating))
+
+        university_ratings.sort(key=lambda x: x[1], reverse=True)
+        return university_ratings[:5]

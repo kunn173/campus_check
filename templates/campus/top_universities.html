@@ -1,0 +1,47 @@
+{% extends 'campus/base.html' %}
+{% block content %} 
+<h2>Top Universities</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>Location</th>
+      <th>Average Rating</th>
+    </tr>
+  </thead>
+  <tbody> {% if top_universities %} 
+  <div class="col-md-6 mb-4">
+      <div class="card">
+        <img src="{{ top_universities.0.0.logo.url }}" alt="{{ top_universities.0.0.name }} logo" class="card-img-top">
+        <div class="card-body">
+          <h5 class="card-title">
+            #1 👑<a href="{% url 'universities:university_detail' top_universities.0.0.slug %}"> {{ top_universities.0.0.name }}</a> 
+          </h5>
+          <p class="card-text">Location: {{ top_universities.0.0.location }}</p>
+          </p> {% if top_universities.0.1 %} <p class="card-text">Rating: 
+            <span class="fa fa-star {% if top_universities.0.1 > 0 %} checked {% endif %}"></span>
+            <span class="fa fa-star {% if top_universities.0.1 > 1 %} checked {% endif %}"></span>
+            <span class="fa fa-star {% if top_universities.0.1 > 2 %} checked {% endif %}"></span>
+            <span class="fa fa-star {% if top_universities.0.1 > 3 %} checked {% endif %}"></span>
+            <span class="fa fa-star {% if top_universities.0.1 > 4 %} checked {% endif %}"></span>
+          </p> {% endif %}
+        </div>
+      </div>
+    </div> {% endif %} {% for top_university, rating in top_universities|slice:"1:" %} <tr>
+      <td>{{ forloop.counter0|add:2}}</td>
+      <td>
+        <a href="{% url 'universities:university_detail' top_university.slug %}">{{ top_university.name }}</a>
+      </td>
+      <td>{{ top_university.location }}</td>
+      <td>
+        <span class="fa fa-star {% if rating > 0 %} checked {% endif %}"></span>
+        <span class="fa fa-star {% if rating > 1 %} checked {% endif %}"></span>
+        <span class="fa fa-star {% if rating > 2 %} checked {% endif %}"></span>
+        <span class="fa fa-star {% if rating > 3 %} checked {% endif %}"></span>
+        <span class="fa fa-star {% if rating > 4 %} checked {% endif %}"></span>
+      </td>
+    </tr> {% empty %} <tr>
+      <td colspan="3">No universities found.</td>
+    </tr> {% endfor %} </tbody>
+</table> {% endblock %}
