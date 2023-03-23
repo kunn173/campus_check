@@ -36,6 +36,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'universities:top_universities' %}">Top Universities</a>   
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'map' %}">Map</a>
+            </li>
             {% if user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Logout</a>   

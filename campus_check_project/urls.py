@@ -29,8 +29,7 @@ urlpatterns = [
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
     path('student_profile/', views.student_profile, name='student_profile'),
-    path('suggest/', views.universitiesSuggestionView, name='suggest')
-    
-
-    
+    path('suggest/', views.universitiesSuggestionView, name='suggest'),
+    path('map/', views.map, name='map'),
+        
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

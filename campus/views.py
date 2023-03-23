@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import University, Course, Degree, Review, Enrollment, StudentProfile
+from .models import University, Course, Location, Review, Enrollment, StudentProfile
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
@@ -8,7 +8,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .forms import CourseReviewForm, StudentProfileForm
 from django.db.models import Avg, Sum
-from django.http import JsonResponse
+import json
 from django.db.models import Q
 
 
@@ -259,3 +259,18 @@ class TopUniversitiesView(ListView): #Xuanming Feng
 
         university_ratings.sort(key=lambda x: x[1], reverse=True)
         return university_ratings[:5]
+    
+
+def contacting(request, course_name_slug):
+    course = get_object_or_404(Course, slug=course_name_slug)
+    return render(request, 'campus/Contacting.html', {'course': course})
+
+
+def map(request):
+    locations=Location.objects.all().values()
+    locations = json.dumps( list(locations))
+    return render(request, 'campus/Map.html', {'locations':locations})
+
+def tip(request, course_name_slug):
+    course = get_object_or_404(Course, slug=course_name_slug)
+    return render(request, 'campus/Tip.html', {'course': course})

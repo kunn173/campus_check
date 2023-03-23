@@ -8,9 +8,10 @@ class Location(models.Model):
     name = models.CharField(max_length=100)
     longitude = models.FloatField()
     latitude = models.FloatField()
+    university_slug = models.SlugField(unique=True, null=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.name}'
     class Meta:
         verbose_name_plural = 'Locations'
 

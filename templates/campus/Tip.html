@@ -1,0 +1,11 @@
+{% extends 'campus/base.html' %}
+
+{% block content %}
+    <div class="jumbotron jumbotron-brown text-center">
+        <h2 class="display-4">Notice:</h2>
+        <p class="lead">We have send the contact details of the contact student to your email!</p>
+        <hr class="my-4">
+        <br/>
+        <a class="btn btn-primary btn-lg beautiful-button" href="{% url 'universities:course_detail' course.slug %}" role="button">Confirm</a>
+    </div>
+{% endblock %}

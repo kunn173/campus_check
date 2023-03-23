@@ -12,6 +12,8 @@ urlpatterns = [
     path('courses/<slug:course_name_slug>/submit_review/', views.submit_review, name='submit_review'),
     path('suggest/', views.universitiesSuggestionView, name='suggest'),
     path('top_universities/', TopUniversitiesView.as_view(), name='top_universities'),  #Xuanming Feng
+    path('courses/<slug:course_name_slug>/contacting/', views.contacting, name='contacting'),
+    path('courses/<slug:course_name_slug>/tip/', views.tip, name='tip'),
 ]
 
 
