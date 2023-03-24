@@ -1,12 +1,18 @@
 {% extends 'campus/base.html' %}
-
+{% load static %}
 {% block content %}
-
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- jQuery UI Autocomplete -->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+<script src="{% static 'js/suggest.js' %}" type="text/javascript"></script>
 <h1 class="mb-4">Universities</h1>
-<form method="get">
+
+<form method="get" id="search-form">
     <span class="form-group">
         <label for="search">Search:</label>
-        <input type="text" name="search" class="form-control" value="{{ request.GET.search }}">
+        <input type="text" name="search" id="search" class="form-control" autocomplete="off" value="{{ request.GET.search }}" data-url="{% url 'universities:search_suggestions' %}">
         <button type="submit" class="btn btn-primary mb-1 beautiful-button">Search</button>
     </span>
 </form>

@@ -2,15 +2,32 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import University, Course, Location, Review, Enrollment, StudentProfile
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from .forms import CourseReviewForm, StudentProfileForm
-from django.db.models import Avg, Sum
+from .forms import CourseReviewForm, StudentProfileForm, StudentRegistrationForm
+from django.db.models import Avg, Sum, Q
 import json
-from django.db.models import Q
 from django.contrib import messages
+from django.views.generic import ListView #XuanmingFeng
+
+from django.http import JsonResponse
+from django.db.models import Q
+from .models import University, Course
+
+def search_suggestions(request):
+    search_term = request.GET.get('term', '')
+    universities = University.objects.filter(Q(name__icontains=search_term) | 
+                                              Q(location__name__icontains=search_term))
+    courses = Course.objects.filter(name__icontains=search_term)
+    cities = University.objects.filter(location__name__icontains=search_term).values_list('location__name', flat=True)
+    suggestions = {
+        'universities': list(universities.values_list('name', flat=True)),
+        'courses': list(courses.values_list('name', flat=True)),
+        'cities': list(set(cities)),
+    }
+    return JsonResponse(suggestions)
 
 @login_required
 def student_profile(request):
@@ -97,7 +114,7 @@ def submit_review(request, course_name_slug):
 
     return render(request, 'campus/submit_review.html', {'form': form, 'course': course, 'enrollment': enrollment})
 
-from .forms import StudentRegistrationForm
+
 
 def register(request):
     if request.method == 'POST':
@@ -133,42 +150,19 @@ def user_logout(request):
 def index(request):
     return render(request, 'campus/index.html')
 
-def get_universities_list(max_results=0, starts_with=''):
-    universities_list = []
-    if starts_with:
-        universities_list = University.objects.filter(Q(name__icontains=starts_with) | 
-                                           Q(location__name__icontains=starts_with) | 
-                                           Q(degree__name__icontains=starts_with) | 
-                                           Q(courses__name__icontains=starts_with))
-        if max_results > 0:
-            if len(universities_list) > max_results:
-                universities_list = universities_list[:max_results]
-    return universities_list
-
-def universitiesSuggestionView(request):
-
-        if 'suggestion' in request.GET:
-            suggestion = request.GET['suggestion']
-        else:
-            suggestion = ''
-        university_list = get_universities_list(max_results=8,starts_with=suggestion)
-        if len(university_list) == 0:
-            university_list = University.objects.all()
-        return render(request,'campus/university_list.html',{'university': university_list})
 
 def university_list(request):
     universities = University.objects.all()
-    search_term = request.GET.get('search')
+    search_term = request.GET.get('search', '')
 
     if search_term:
-        # search across different fields
         universities = universities.filter(Q(name__icontains=search_term) | 
                                            Q(location__name__icontains=search_term) | 
                                            Q(degree__name__icontains=search_term) | 
                                            Q(courses__name__icontains=search_term))
 
     university_ratings = {}
-    for university in universities:
+    for university in universities.select_related('location').prefetch_related('courses__review_set'):
         course_ratings = []
         courses = university.courses.all()
         for course in courses:
@@ -176,12 +170,12 @@ def university_list(request):
             if reviews:
                 course_rating = (reviews.aggregate(
                     Avg('value_for_money'))['value_for_money__avg'] +
-                                     reviews.aggregate(
-                        Avg('teaching_quality'))['teaching_quality__avg'] +
-                                     reviews.aggregate(
-                        Avg('course_content'))['course_content__avg'] +
-                                     reviews.aggregate(
-                        Avg('job_prospects'))['job_prospects__avg']) / 4
+                                 reviews.aggregate(
+                    Avg('teaching_quality'))['teaching_quality__avg'] +
+                                 reviews.aggregate(
+                    Avg('course_content'))['course_content__avg'] +
+                                 reviews.aggregate(
+                    Avg('job_prospects'))['job_prospects__avg']) / 4
                 course_ratings.append(course_rating)
         if course_ratings:
             university_rating = sum(course_ratings) / len(course_ratings)
@@ -235,7 +229,7 @@ def course_detail(request, course_name_slug):
     return render(request, 'campus/course_detail.html', {'course': course, 'rating': rating, 'reviews': reviews})
 
 
-from django.views.generic import ListView #XuanmingFeng
+
 
 class TopUniversitiesView(ListView): #Xuanming Feng
     model = University

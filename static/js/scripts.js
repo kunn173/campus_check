@@ -1,9 +1,20 @@
-$('#search-input').keyup(function() {
-  var query;
-  query = $(this).val();
-  $.get('/universities/suggest/',
-    {'suggestion': query},
-    function(data) {
-      $('#categories-listing').html(data);
-      })
+$(document).ready(function() {
+    $('#search').autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: '{% url "universities:search_suggestions" %}',
+                data: {'term': request.term},
+                dataType: 'json',
+                success: function(data) {
+                    var suggestions = data.universities.concat(data.courses, data.cities);
+                    response(suggestions);
+                },
+            });
+        },
+        minLength: 2,
+        select: function(event, ui) {
+            $('#search').val(ui.item.value);
+            $('#search-form').submit();
+        },
+    });
 });
