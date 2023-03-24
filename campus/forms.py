@@ -34,6 +34,8 @@ class CourseReviewForm(forms.ModelForm):
         enrollment = Enrollment.objects.filter(user=self.user, courses=self.course).first()
         if not enrollment:
             raise forms.ValidationError("You cannot review a course that you have not enrolled in.")
+        if Review.objects.filter(user=self.user, course=self.course).exists():
+            raise forms.ValidationError("You have already reviewed this course.")
         return cleaned_data
 
     def save(self, commit=True):
@@ -45,6 +47,8 @@ class CourseReviewForm(forms.ModelForm):
             instance.save()
         return instance
 
+
+    
 def get_or_create_student_profile(user):
     student_profile, created = StudentProfile.objects.get_or_create(user=user)
     if created:

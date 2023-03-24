@@ -1,6 +1,13 @@
 {% extends 'campus/base.html' %}
 
 {% block content %}
+{% if form.non_field_errors %}
+    <div class="alert alert-danger">
+        {% for error in form.non_field_errors %}
+            {{ error }}
+        {% endfor %}
+    </div>
+{% endif %}
   <h1>Submit a Review</h1>
   <form method="POST" class="rate-form">
     {% csrf_token %}
