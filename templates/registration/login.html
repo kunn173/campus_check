@@ -5,6 +5,8 @@
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class = "btn btn-primary beautiful-button">Login</button>
+    <button type="submit" class="btn btn-primary beautiful-button">Login</button>  Don't have an account yet? <a href="{% url 'register' %}">Register here</a>.
   </form>
+  
 {% endblock %}
+

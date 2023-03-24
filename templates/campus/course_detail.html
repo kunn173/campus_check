@@ -1,5 +1,5 @@
 {% extends 'campus/base.html' %}
-
+{% load static %}
 {% block content %}
   <div class="container">
     <h1 class="display-4">{{ course.name }}</h1>
@@ -28,8 +28,17 @@
       <ul class="list-unstyled">
         {% for review in reviews %}
           <li class="mb-4">
-            <p>{{ review.review_text }}</p>
-            <p class="text-muted mb-0">Submitted by: {{ review.user.username }}</p>
+            <div class="media">
+              <div>
+                <img src="{% static 'image/default.png' %}" alt="Profile Picture" class="img-thumbnail rounded-circle" width="50" height="50">
+              </div>
+              <div class="media-body ml-3">
+                <p>{{ review.review_text }}</p>
+                <p class="text-muted mb-0">Submitted by: {{ review.user.username }}</p>
+                <br>
+                <a class="btn btn-primary btn-lg beautiful-button" href="{% url 'universities:contacting' course.slug %}" role="button">Get in touch</a>
+              </div>
+            </div>
             <hr>
           </li>
         {% empty %}

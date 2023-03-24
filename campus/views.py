@@ -10,8 +10,7 @@ from .forms import CourseReviewForm, StudentProfileForm
 from django.db.models import Avg, Sum
 import json
 from django.db.models import Q
-
-
+from django.contrib import messages
 
 @login_required
 def student_profile(request):
@@ -21,26 +20,33 @@ def student_profile(request):
         profile = StudentProfile(user=request.user)
         profile.save()
 
+    # Get the Enrollment object for the current user
+    enrollment = Enrollment.objects.filter(user=request.user).first()
+
+    # Get the courses related to the Enrollment object, if it exists
+    if enrollment:
+        courses = enrollment.courses.all()
+    else:
+        courses = Course.objects.none()
+
     reviews = Review.objects.filter(user=request.user)
     ratings_by_course = {}
 
     for review in reviews:
         if review.course_id not in ratings_by_course:
             ratings_by_course[review.course_id] = {
-            'value_for_money': [review.value_for_money],
-            'teaching_quality': [review.teaching_quality],
-            'course_content': [review.course_content],
-            'job_prospects': [review.job_prospects],
-            'review_text': [review.review_text],
-        }
+                'value_for_money': [review.value_for_money],
+                'teaching_quality': [review.teaching_quality],
+                'course_content': [review.course_content],
+                'job_prospects': [review.job_prospects],
+                'review_text': [review.review_text],
+            }
         else:
             ratings_by_course[review.course_id]['value_for_money'].append(review.value_for_money)
             ratings_by_course[review.course_id]['teaching_quality'].append(review.teaching_quality)
             ratings_by_course[review.course_id]['course_content'].append(review.course_content)
             ratings_by_course[review.course_id]['job_prospects'].append(review.job_prospects)
             ratings_by_course[review.course_id]['review_text'].append(review.review_text)
-
-    courses = Course.objects.all()
 
     for course in courses:
         if course.id in ratings_by_course:
@@ -56,7 +62,8 @@ def student_profile(request):
         form = StudentProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
-            return redirect(reverse('universities:student_profile'))
+            messages.success(request, 'Your information has been updated successfully.')
+            return redirect(reverse('student_profile'))
 
     context = {
         'form': form,
@@ -64,6 +71,7 @@ def student_profile(request):
     }
 
     return render(request, 'campus/student_profile.html', context)
+
 
 
 @login_required
@@ -89,20 +97,18 @@ def submit_review(request, course_name_slug):
 
     return render(request, 'campus/submit_review.html', {'form': form, 'course': course, 'enrollment': enrollment})
 
+from .forms import StudentRegistrationForm
 
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = StudentRegistrationForm(request.POST)
         if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            return redirect('index')
+            user = form.save()
+            return redirect('login')
     else:
-        form = UserCreationForm()
+        form = StudentRegistrationForm()
     return render(request, 'registration/register.html', {'form': form})
+
 
 
 def user_login(request):
