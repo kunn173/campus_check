@@ -5,29 +5,27 @@ from django.contrib.auth.models import User
 from django import forms
 from .models import Review
 
-class CourseReviewForm(forms.ModelForm):
-    value_for_money = forms.ChoiceField(choices=[(i, '') for i in range(1, 6)],
-                                        widget=forms.RadioSelect(attrs={'class': 'star-rating'}),
-                                        label='Value for Money')
-    teaching_quality = forms.ChoiceField(choices=[(i, '') for i in range(1, 6)],
-                                         widget=forms.RadioSelect(attrs={'class': 'star-rating'}),
-                                         label='Teaching Quality')
-    course_content = forms.ChoiceField(choices=[(i, '') for i in range(1, 6)],
-                                       widget=forms.RadioSelect(attrs={'class': 'star-rating'}),
-                                       label='Course Content')
-    job_prospects = forms.ChoiceField(choices=[(i, '') for i in range(1, 6)],
-                                      widget=forms.RadioSelect(attrs={'class': 'star-rating'}),
-                                      label='Job Prospects')
-    review_text = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}))
 
+class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
-        fields = ('value_for_money', 'teaching_quality', 'course_content', 'job_prospects', 'review_text')
+        fields = ['value_for_money', 'teaching_quality', 'course_content', 'job_prospects', 'review_text']
+        widgets = {
+            'value_for_money': forms.HiddenInput(attrs={'id': 'value-for-money-input'}),
+            'teaching_quality': forms.HiddenInput(attrs={'id': 'teaching-quality-input'}),
+            'course_content': forms.HiddenInput(attrs={'id': 'course-content-input'}),
+            'job_prospects': forms.HiddenInput(attrs={'id': 'job-prospects-input'}),
+            'review_text': forms.Textarea(attrs={'rows': 5})
+        }
 
     def __init__(self, *args, **kwargs):
-        self.course = kwargs.pop('course')
-        self.user = kwargs.pop('user')
+        self.user = kwargs.pop('user', None)
+        self.course = kwargs.pop('course', None)
         super().__init__(*args, **kwargs)
+        self.fields['value_for_money'].widget.attrs['class'] = 'star-rating'
+        self.fields['teaching_quality'].widget.attrs['class'] = 'star-rating'
+        self.fields['course_content'].widget.attrs['class'] = 'star-rating'
+        self.fields['job_prospects'].widget.attrs['class'] = 'star-rating'
 
     def clean(self):
         cleaned_data = super().clean()
@@ -37,16 +35,6 @@ class CourseReviewForm(forms.ModelForm):
         if Review.objects.filter(user=self.user, course=self.course).exists():
             raise forms.ValidationError("You have already reviewed this course.")
         return cleaned_data
-
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        instance.user = self.user
-        instance.university = self.course.university
-        instance.course = self.course
-        if commit:
-            instance.save()
-        return instance
-
 
     
 def get_or_create_student_profile(user):

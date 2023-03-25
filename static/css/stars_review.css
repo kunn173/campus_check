@@ -1,0 +1,20 @@
+.star-rating{
+    color: #bebebe;
+    font-size:2em;
+}
+
+.my-star::before{
+    content:"\002605";
+}
+
+.my-star{
+    font-style: unset !important;
+}
+
+.is-active{
+    color:#fb8900;
+}
+
+.my-star:not(.is-active):hover{
+    color: #fb8900;
+}

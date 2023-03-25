@@ -6,7 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from .forms import CourseReviewForm, StudentProfileForm, StudentRegistrationForm
+from .forms import ReviewForm, StudentProfileForm, StudentRegistrationForm
 from django.db.models import Avg, Sum, Q
 import json
 from django.contrib import messages
@@ -94,25 +94,29 @@ def student_profile(request):
 @login_required
 def submit_review(request, course_name_slug):
     course = get_object_or_404(Course, slug=course_name_slug)
-    user = request.user
-    try:
-        enrollment = Enrollment.objects.get(user=user, courses=course)
-    except Enrollment.DoesNotExist:
-        enrollment = None
-
     if request.method == 'POST':
-        form = CourseReviewForm(request.POST, course=course, user=user)
+        form = ReviewForm(request.POST, user=request.user, course=course)
         if form.is_valid():
+            enrollment = Enrollment.objects.filter(user=request.user, courses=course).first()
+            if not enrollment:
+                messages.error(request, "You cannot review a course that you have not enrolled in.")
+                return redirect('universities:course_detail', course_name_slug=course_name_slug)
+            if Review.objects.filter(user=request.user, course=course).exists():
+                messages.error(request, "You have already submitted a review for this course.")
+                return redirect('universities:course_detail', course_name_slug=course_name_slug)
             review = form.save(commit=False)
+            review.user = request.user
             review.course = course
-            review.user = user
             review.university = course.university
             review.save()
-            return HttpResponseRedirect(reverse('universities:course_detail', args=[course.slug]))
+            messages.success(request, 'Your review has been submitted successfully!')
+            return redirect('universities:course_detail', course_name_slug=course_name_slug)
     else:
-        form = CourseReviewForm(course=course, user=user)
+        form = ReviewForm(user=request.user, course=course)
+    return render(request, 'campus/submit_review.html', {'form': form, 'course': course})
 
-    return render(request, 'campus/submit_review.html', {'form': form, 'course': course, 'enrollment': enrollment})
+
+
 
 
 

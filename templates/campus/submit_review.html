@@ -1,5 +1,5 @@
 {% extends 'campus/base.html' %}
-
+{% load static %}
 {% block content %}
 {% if form.non_field_errors %}
     <div class="alert alert-danger">
@@ -8,57 +8,63 @@
         {% endfor %}
     </div>
 {% endif %}
-  <h1>Submit a Review</h1>
-  <form method="POST" class="rate-form">
-    {% csrf_token %}
-    <label for="value_for_money">Value for Money</label>
-    <div class="stars">
-      <span id="first"></span>
-      <span id="second"></span>
-      <span id="third"></span>
-      <span id="fourth"></span>
-      <span id="fifth"></span>
-    </div>
-    {{ form.value_for_money }}
-    <br><br>
-<label for="teaching_quality">Teaching Quality</label>
-<div class="stars">
-  <span id="first"></span>
-  <span id="second"></span>
-  <span id="third"></span>
-  <span id="fourth"></span>
-  <span id="fifth"></span>
+<link rel="stylesheet" type="text/css" href="{% static 'css/stars_review.css' %}"/>
+<form method="post">
+  {% csrf_token %}
+ <div>
+  <label for="id_value_for_money">Value for Money:</label>
+  <div class="star-rating">
+    <i class="my-star star-value-for-money star-1" data-star="1"></i>
+    <i class="my-star star-value-for-money star-2" data-star="2"></i>
+    <i class="my-star star-value-for-money star-3" data-star="3"></i>
+    <i class="my-star star-value-for-money star-4" data-star="4"></i>
+    <i class="my-star star-value-for-money star-5" data-star="5"></i>
+  </div>
+  <input type="hidden" name="value_for_money" id="id_value_for_money" value="">
 </div>
-{{ form.teaching_quality }}
-<br><br>
 
-<label for="course_content">Course Content</label>
-<div class="stars">
-  <span id="first"></span>
-  <span id="second"></span>
-  <span id="third"></span>
-  <span id="fourth"></span>
-  <span id="fifth"></span>
+<div>
+  <label for="id_teaching_quality">Teaching Quality:</label>
+  <div class="star-rating">
+    <i class="my-star star-teaching-quality star-1" data-star="1"></i>
+    <i class="my-star star-teaching-quality star-2" data-star="2"></i>
+    <i class="my-star star-teaching-quality star-3" data-star="3"></i>
+    <i class="my-star star-teaching-quality star-4" data-star="4"></i>
+    <i class="my-star star-teaching-quality star-5" data-star="5"></i>
+  </div>
+  <input type="hidden" name="teaching_quality" id="id_teaching_quality" value="">
 </div>
-{{ form.course_content }}
-<br><br>
-
-<label for="job_prospects">Job Prospects</label>
-<div class="stars">
-  <span id="first"></span>
-  <span id="second"></span>
-  <span id="third"></span>
-  <span id="fourth"></span>
-  <span id="fifth"></span>
+<div>
+  <label for="id_course_content">Course Content:</label>
+  <div class="star-rating">
+    <i class="my-star star-course-content star-1" data-star="1"></i>
+    <i class="my-star star-course-content star-2" data-star="2"></i>
+    <i class="my-star star-course-content star-3" data-star="3"></i>
+    <i class="my-star star-course-content star-4" data-star="4"></i>
+    <i class="my-star star-course-content star-5" data-star="5"></i>
+  </div>
+  <input type="hidden" name="course_content" id="id_course_content" value="">
 </div>
-{{ form.job_prospects }}
-<br><br>
-
-{{ form.review_text }}
-
-<br><br>
-<button type="submit" class="btn btn-primary mb-1 beautiful-button">Submit Review</button>
-  </form>
-  <div id="confirm-box"></div>
+<div>
+  <label for="id_job_prospects">Job Prospects:</label>
+  <div class="star-rating">
+    <i class="my-star star-job-prospects star-1" data-star="1"></i>
+    <i class="my-star star-job-prospects star-2" data-star="2"></i>
+    <i class="my-star star-job-prospects star-3" data-star="3"></i>
+    <i class="my-star star-job-prospects star-4" data-star="4"></i>
+    <i class="my-star star-job-prospects star-5" data-star="5"></i>
+  </div>
+  <input type="hidden" name="job_prospects" id="id_job_prospects" value="">
+</div>
+  <div>
+    <label for="id_review_text">Review Text:</label>
+    <textarea name="review_text" id="id_review_text"></textarea>
+  </div>
+  <button class="btn btn-primary btn-lg beautiful-button" type="submit" >Submit Review</button>
+</form>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/ui/1.13.1/jquery-ui.js"></script> 
+<script src="{% static 'js/stars_review.js' %}" type="text/javascript"></script>
 {% endblock %}
 
