@@ -3,8 +3,8 @@
   <h2>Your contact details</h2>
     <form action="{% url 'universities:tip' course.slug %}" method="post">
     {% csrf_token %}
-    <input type="text" name="name" placeholder="name" class="input-item" required="required"><br/><br/>
-    <input type="email" name="email" placeholder="email" class="input-item" required="required"><br/><br/>
-    <input class="btn btn-primary btn-lg beautiful-button" type="submit"/>
+    <input type="text" name="name" placeholder="Input your name" class="input-item" required="required"><br/><br/>
+    <input type="email" name="email" placeholder="Input your email" class="input-item" required="required"><br/><br/>
+    <input class="btn btn-primary btn-lg beautiful-button" type="submit" value="Send"/>
     </form>
 {% endblock %}

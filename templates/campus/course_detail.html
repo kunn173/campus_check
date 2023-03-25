@@ -2,6 +2,13 @@
 {% load static %}
 {% block content %}
   <div class="container">
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
     <h1 class="display-4">{{ course.name }}</h1>
     <div class="row">
       <div class="col-md-8">
@@ -19,7 +26,7 @@
         {% if request.user.is_authenticated %}
           <a href="{% url 'universities:submit_review' course.slug %}" class="btn btn-primary beautiful-button">Submit a review</a>
         {% else %}
-          <p>Login to submit a review</p>
+          <p><a href="{% url 'login' %}">Login to submit a review</a></p>
         {% endif %}
       </div>
     </div>
@@ -35,8 +42,15 @@
               <div class="media-body ml-3">
                 <p>{{ review.review_text }}</p>
                 <p class="text-muted mb-0">Submitted by: {{ review.user.username }}</p>
+                <p class="text-muted mb-0">Average Rating:
+                  <span class="fa fa-star {% if review.value_for_money > 0 %} checked {% endif %}"></span>
+                  <span class="fa fa-star {% if review.value_for_money > 1 %} checked {% endif %}"></span>
+                  <span class="fa fa-star {% if review.value_for_money > 2 %} checked {% endif %}"></span>
+                  <span class="fa fa-star {% if review.value_for_money > 3 %} checked {% endif %}" ></span>
+                  <span class="fa fa-star {% if review.value_for_money > 4 %} checked {% endif %}"></span>
+                </p>
                 <br>
-                <a class="btn btn-primary btn-lg beautiful-button" href="{% url 'universities:contacting' course.slug %}" role="button">Get in touch</a>
+                <a class="btn btn-primary beautiful-button" href="{% url 'universities:contacting' course.slug %}" role="button">Get in touch</a>
               </div>
             </div>
             <hr>

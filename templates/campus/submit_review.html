@@ -9,6 +9,7 @@
     </div>
 {% endif %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/stars_review.css' %}"/>
+<h1> Submit your review here</h1>
 <form method="post">
   {% csrf_token %}
  <div>
@@ -58,9 +59,10 @@
 </div>
   <div>
     <label for="id_review_text">Review Text:</label>
-    <textarea name="review_text" id="id_review_text"></textarea>
+    <p>
+    <textarea name="review_text" id="id_review_text"></textarea></p>
   </div>
-  <button class="btn btn-primary btn-lg beautiful-button" type="submit" >Submit Review</button>
+  <button class="btn btn-primary beautiful-button" type="submit" >Submit Review</button>
 </form>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css">

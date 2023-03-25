@@ -90,7 +90,6 @@ def student_profile(request):
     return render(request, 'campus/student_profile.html', context)
 
 
-
 @login_required
 def submit_review(request, course_name_slug):
     course = get_object_or_404(Course, slug=course_name_slug)
@@ -114,10 +113,6 @@ def submit_review(request, course_name_slug):
     else:
         form = ReviewForm(user=request.user, course=course)
     return render(request, 'campus/submit_review.html', {'form': form, 'course': course})
-
-
-
-
 
 
 def register(request):
@@ -218,8 +213,6 @@ def university_detail(request, university_name_slug):
     }
     return render(request, 'campus/university_detail.html', context)
 
-
-
 def course_detail(request, course_name_slug):
     course = get_object_or_404(Course, slug=course_name_slug)
     reviews = Review.objects.filter(course=course)
@@ -231,8 +224,6 @@ def course_detail(request, course_name_slug):
                   reviews.aggregate(Sum('job_prospects'))['job_prospects__sum']) / (4 * reviews.count())
 
     return render(request, 'campus/course_detail.html', {'course': course, 'rating': rating, 'reviews': reviews})
-
-
 
 
 class TopUniversitiesView(ListView): #Xuanming Feng
