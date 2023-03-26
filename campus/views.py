@@ -3,18 +3,14 @@ from .models import University, Course, Location, Review, Enrollment, StudentPro
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .forms import ReviewForm, StudentProfileForm, StudentRegistrationForm
 from django.db.models import Avg, Sum, Q
 import json
 from django.contrib import messages
 from django.views.generic import ListView #XuanmingFeng
-
 from django.http import JsonResponse
-from django.db.models import Q
-from .models import University, Course
+
 
 def search_suggestions(request):
     search_term = request.GET.get('term', '')
@@ -178,7 +174,9 @@ def university_list(request):
                 course_ratings.append(course_rating)
         if course_ratings:
             university_rating = sum(course_ratings) / len(course_ratings)
-            university_ratings[university] = university_rating
+        else:
+            university_rating = 0
+        university_ratings[university] = university_rating
 
     context = {
         'university_ratings': university_ratings,
@@ -205,7 +203,7 @@ def university_detail(request, university_name_slug):
     if course_ratings:
         university_rating = sum(course_ratings) / len(course_ratings)
     else:
-        university_rating = None
+        university_rating = 0
     context = {
         'university': university,
         'courses': courses,
@@ -226,14 +224,14 @@ def course_detail(request, course_name_slug):
     return render(request, 'campus/course_detail.html', {'course': course, 'rating': rating, 'reviews': reviews})
 
 
-class TopUniversitiesView(ListView): #Xuanming Feng
+class TopUniversitiesView(ListView):
     model = University
     template_name = 'campus/top_universities.html'
     context_object_name = 'top_universities'
 
     def get_queryset(self):
         universities = University.objects.all()
-        university_ratings = []
+        university_ratings = {}
 
         for university in universities:
             course_ratings = []
@@ -250,10 +248,13 @@ class TopUniversitiesView(ListView): #Xuanming Feng
 
             if course_ratings:
                 university_rating = sum(course_ratings) / len(course_ratings)
-                university_ratings.append((university, university_rating))
+                university_ratings[university] = university_rating
+            else:
+                university_ratings[university] = 0
 
-        university_ratings.sort(key=lambda x: x[1], reverse=True)
-        return university_ratings[:5]
+        sorted_university_ratings = sorted(university_ratings.items(), key=lambda x: x[1], reverse=True)
+        top_five_universities = sorted_university_ratings[:5]
+        return top_five_universities
     
 
 def contacting(request, course_name_slug):

@@ -8,7 +8,7 @@
         <div class="col-md-8">
             <h1>{{ university.name }}</h1>
             <p>{{ university.description }}</p>
-            {% if university_rating %}
+            {% if university_rating is not None  %}
                 <p>Average Rating:
                 <span class="fa fa-star {% if university_rating > 0 %} checked {% endif %}"></span>
                 <span class="fa fa-star {% if university_rating > 1 %} checked {% endif %}"></span>

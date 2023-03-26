@@ -20,7 +20,7 @@
             #1 👑<a href="{% url 'universities:university_detail' top_universities.0.0.slug %}"> {{ top_universities.0.0.name }}</a> 
           </h5>
           <p class="card-text">Location: {{ top_universities.0.0.location }}</p>
-          </p> {% if top_universities.0.1 %} <p class="card-text">Rating: 
+          </p> {% if top_universities.0.1 is not None %} <p class="card-text">Rating: 
             <span class="fa fa-star {% if top_universities.0.1 > 0 %} checked {% endif %}"></span>
             <span class="fa fa-star {% if top_universities.0.1 > 1 %} checked {% endif %}"></span>
             <span class="fa fa-star {% if top_universities.0.1 > 2 %} checked {% endif %}"></span>
