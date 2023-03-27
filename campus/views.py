@@ -13,7 +13,9 @@ from django.http import JsonResponse
 
 
 def search_suggestions(request):
+    #search term is extracted from the GET parameters of the request
     search_term = request.GET.get('term', '')
+    #universities, courses, and cities that match the search term are queried
     universities = University.objects.filter(Q(name__icontains=search_term) | 
                                               Q(location__name__icontains=search_term))
     courses = Course.objects.filter(name__icontains=search_term)
@@ -93,9 +95,11 @@ def submit_review(request, course_name_slug):
         form = ReviewForm(request.POST, user=request.user, course=course)
         if form.is_valid():
             enrollment = Enrollment.objects.filter(user=request.user, courses=course).first()
+            #Check if the user has enrolled in the course, if not, return an error message and redirect the user to the course_detail page.
             if not enrollment:
                 messages.error(request, "You cannot review a course that you have not enrolled in.")
                 return redirect('universities:course_detail', course_name_slug=course_name_slug)
+            #Check if the user has already submitted a review for this course, if yes, return an error message and redirect the user to the course_detail page
             if Review.objects.filter(user=request.user, course=course).exists():
                 messages.error(request, "You have already submitted a review for this course.")
                 return redirect('universities:course_detail', course_name_slug=course_name_slug)
@@ -120,8 +124,6 @@ def register(request):
     else:
         form = StudentRegistrationForm()
     return render(request, 'registration/register.html', {'form': form})
-
-
 
 def user_login(request):
     if request.method == 'POST':
@@ -149,7 +151,7 @@ def index(request):
 def university_list(request):
     universities = University.objects.all()
     search_term = request.GET.get('search', '')
-
+    # Filter universities based on search term 
     if search_term:
         universities = universities.filter(Q(name__icontains=search_term) | 
                                            Q(location__name__icontains=search_term) | 
@@ -157,11 +159,14 @@ def university_list(request):
                                            Q(courses__name__icontains=search_term))
 
     university_ratings = {}
+    # Loop through universities, prefetch courses and reviews, and calculate ratings
     for university in universities.select_related('location').prefetch_related('courses__review_set'):
         course_ratings = []
         courses = university.courses.all()
+         # Loop through courses and calculate ratings
         for course in courses:
             reviews = course.review_set.all()
+            # Calculate the course rating as the average of the four review criteria
             if reviews:
                 course_rating = (reviews.aggregate(
                     Avg('value_for_money'))['value_for_money__avg'] +
@@ -173,6 +178,7 @@ def university_list(request):
                     Avg('job_prospects'))['job_prospects__avg']) / 4
                 course_ratings.append(course_rating)
         if course_ratings:
+            # Calculate the university rating as the average of all course ratings
             university_rating = sum(course_ratings) / len(course_ratings)
         else:
             university_rating = 0
@@ -185,9 +191,12 @@ def university_list(request):
 
 
 def university_detail(request, university_name_slug):
+    # Retrieve the University object with the matching slug, or return a 404 error if it doesn't exist.
     university = get_object_or_404(University, slug=university_name_slug)
+    # Retrieve all courses that are associated with the university.
     courses = Course.objects.filter(university=university)
     course_ratings = []
+    # Iterate through each course to retrieve the associated reviews and calculate the course rating
     for course in courses:
         reviews = course.review_set.all()
         if reviews:
@@ -200,6 +209,7 @@ def university_detail(request, university_name_slug):
                                  reviews.aggregate(
                     Avg('job_prospects'))['job_prospects__avg']) / 4
             course_ratings.append(course_rating)
+    # Calculate the university rating by averaging the course ratings, if there are any
     if course_ratings:
         university_rating = sum(course_ratings) / len(course_ratings)
     else:
@@ -212,8 +222,11 @@ def university_detail(request, university_name_slug):
     return render(request, 'campus/university_detail.html', context)
 
 def course_detail(request, course_name_slug):
+    # Retrieves the course object with the given slug from the Course model, or raises a 404 error if it doesn't exist
     course = get_object_or_404(Course, slug=course_name_slug)
+    # Filters all reviews related to this course from the Review model
     reviews = Review.objects.filter(course=course)
+    # Calculates the overall rating for the course
     rating = 0
     if reviews:
         rating = (reviews.aggregate(Sum('value_for_money'))['value_for_money__sum'] +

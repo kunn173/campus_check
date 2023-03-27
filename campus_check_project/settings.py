@@ -29,7 +29,7 @@ SECRET_KEY = 'del65ugn5np)f_klij(7%4*c9w$o$1ji)z62!&z+#tdluf-297'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['franpb.pythonanywhere.com']
+ALLOWED_HOSTS = ['http://franpb.pythonanywhere.com/']
 
 
 # Application definition
