@@ -83,3 +83,6 @@ class StudentProfileForm(forms.ModelForm):
     class Meta:
         model = StudentProfile
         fields = ('email', 'first_name', 'last_name', 'date_of_birth')
+
+
+
